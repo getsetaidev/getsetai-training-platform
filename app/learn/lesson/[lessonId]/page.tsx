@@ -12,15 +12,121 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
 
-  // Find lesson
+  // Find lesson (check real modules first, then demo lessons)
   let lesson = null;
   for (const mod of MOCK_MODULES) {
     lesson = mod.lessons.find(l => l.id === params.lessonId);
     if (lesson) break;
   }
 
+  // If not found in real modules, check if it's a demo lesson
+  if (!lesson && params.lessonId.startsWith('demo-lesson-')) {
+    const demoLessons = [
+      {
+        id: 'demo-lesson-1',
+        title: 'Introduction to Data Privacy',
+        description: 'Learn the fundamentals of data privacy and why it matters in today\'s digital world.',
+        type: 'video' as const,
+        contentUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+        duration: 10,
+        order: 1,
+        quiz: {
+          id: 'demo-quiz-1',
+          title: 'Privacy Basics Quiz',
+          passingScore: 70,
+          questions: [
+            {
+              id: 'dq1',
+              prompt: 'What does GDPR stand for?',
+              options: [
+                { id: 'dq1-a', text: 'General Data Protection Regulation', correct: true },
+                { id: 'dq1-b', text: 'Global Data Privacy Rules', correct: false },
+                { id: 'dq1-c', text: 'Government Data Protection Registry', correct: false },
+                { id: 'dq1-d', text: 'Generic Data Processing Requirements', correct: false },
+              ]
+            },
+            {
+              id: 'dq2',
+              prompt: 'Which of the following is considered personal data under GDPR?',
+              options: [
+                { id: 'dq2-a', text: 'Email addresses', correct: true },
+                { id: 'dq2-b', text: 'Weather data', correct: false },
+                { id: 'dq2-c', text: 'Stock prices', correct: false },
+                { id: 'dq2-d', text: 'Public domain content', correct: false },
+              ]
+            }
+          ]
+        }
+      },
+      {
+        id: 'demo-lesson-2',
+        title: 'Secure Data Handling',
+        description: 'Best practices for handling sensitive information securely.',
+        type: 'slides' as const,
+        contentUrl: '/demo-slides',
+        duration: 15,
+        order: 2,
+        quiz: {
+          id: 'demo-quiz-2',
+          title: 'Data Handling Quiz',
+          passingScore: 70,
+          questions: [
+            {
+              id: 'dq3',
+              prompt: 'What is encryption?',
+              options: [
+                { id: 'dq3-a', text: 'Converting data into a coded format to prevent unauthorized access', correct: true },
+                { id: 'dq3-b', text: 'Deleting data permanently', correct: false },
+                { id: 'dq3-c', text: 'Backing up data', correct: false },
+                { id: 'dq3-d', text: 'Sharing data publicly', correct: false },
+              ]
+            }
+          ]
+        }
+      },
+      {
+        id: 'demo-lesson-3',
+        title: 'Incident Response Procedures',
+        description: 'What to do when a data breach or security incident occurs.',
+        type: 'video' as const,
+        contentUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+        duration: 12,
+        order: 3,
+        quiz: {
+          id: 'demo-quiz-3',
+          title: 'Incident Response Quiz',
+          passingScore: 70,
+          questions: [
+            {
+              id: 'dq4',
+              prompt: 'What should be the first step when discovering a data breach?',
+              options: [
+                { id: 'dq4-a', text: 'Contain and assess the breach immediately', correct: true },
+                { id: 'dq4-b', text: 'Wait and see if it gets worse', correct: false },
+                { id: 'dq4-c', text: 'Delete all evidence', correct: false },
+                { id: 'dq4-d', text: 'Inform the media first', correct: false },
+              ]
+            }
+          ]
+        }
+      }
+    ];
+    
+    lesson = demoLessons.find(l => l.id === params.lessonId) || null;
+  }
+
   if (!lesson) {
-    return <div className="text-white p-8">Lesson not found</div>;
+    return (
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <Card glass className="text-center py-12">
+          <h2 className="text-2xl font-bold text-white mb-4">Lesson Not Found</h2>
+          <p className="text-gray-400 mb-6">The lesson you're looking for doesn't exist.</p>
+          <Button onClick={() => router.push('/learn/dashboard')}>
+            Back to Dashboard
+          </Button>
+        </Card>
+      </div>
+    );
   }
 
   const handleSubmit = () => {
