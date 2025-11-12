@@ -156,6 +156,7 @@ export default function ModuleViewPage({ params }: { params: { moduleId: string 
 
 // Separate component for module content to avoid duplication
 function ModuleContent({ module, isDemo }: { module: any; isDemo: boolean }) {
+  const router = useRouter();
   // Mock progress (in real app, fetch from API/state)
   const completedLessons = module.id === 'mod-1' ? ['lesson-1-1'] : [];
   const progress = (completedLessons.length / module.lessons.length) * 100;
