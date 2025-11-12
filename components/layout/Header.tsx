@@ -2,11 +2,18 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useApp } from '@/lib/context/AppContext';
 import { Menu, User, Settings } from 'lucide-react';
 
 export const Header: React.FC = () => {
+  const router = useRouter();
   const { currentRole, setCurrentRole, currentUser } = useApp();
+
+  const handleRoleChange = (newRole: string) => {
+    setCurrentRole(newRole as any);
+    router.push('/'); // Redirect to home page
+  };
 
   const roleOptions: Array<{ value: 'admin' | 'learner' | 'hr'; label: string }> = [
     { value: 'admin', label: 'Admin' },
@@ -85,7 +92,7 @@ export const Header: React.FC = () => {
               <span className="text-sm text-gray-400">Role:</span>
               <select
                 value={currentRole}
-                onChange={(e) => setCurrentRole(e.target.value as any)}
+                onChange={(e) => handleRoleChange(e.target.value)}
                 className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#0070F3] transition-all cursor-pointer"
               >
                 {roleOptions.map((option) => (

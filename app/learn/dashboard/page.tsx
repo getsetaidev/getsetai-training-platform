@@ -43,9 +43,9 @@ export default function LearnerDashboardPage() {
               <ProgressBar value={50} showLabel size="lg" />
               <p className="text-sm text-gray-400 mt-2">1 of 2 lessons completed</p>
             </div>
-            <Link href={`/learn/lesson/${publishedModules[0]?.lessons[1]?.id}`}>
+            <Link href={`/learn/module/${publishedModules[0]?.id}`}>
               <Button leftIcon={<Play size={16} />}>
-                Continue Lesson
+                View Module
               </Button>
             </Link>
           </div>
@@ -82,9 +82,9 @@ export default function LearnerDashboardPage() {
                   {prog.score > 0 && <span className="text-green-400">Score: {prog.score}%</span>}
                 </div>
 
-                <Link href={`/learn/lesson/${module.lessons[0]?.id}`}>
+                <Link href={`/learn/module/${module.id}`}>
                   <Button variant={prog.status === 'not-started' ? 'primary' : 'outline'} className="w-full">
-                    {prog.status === 'not-started' ? 'Start Module' : 'Continue'}
+                    {prog.status === 'not-started' ? 'View Module' : 'Continue'}
                   </Button>
                 </Link>
               </Card>
