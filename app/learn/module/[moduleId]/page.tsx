@@ -12,26 +12,135 @@ export default function ModuleViewPage({ params }: { params: { moduleId: string 
   const module = MOCK_MODULES.find(m => m.id === params.moduleId);
 
   if (!module) {
+    // Show demo module instead of error
+    const demoModule = {
+      id: 'demo-module',
+      title: 'Demo: Data Privacy & Security Fundamentals',
+      description: 'This is a demo module showing how GetSetAI training works. In production, this would be replaced with actual course content generated from your documents.',
+      tags: ['Demo', 'Security', 'Privacy', 'GDPR'],
+      status: 'published' as const,
+      lessons: [
+        {
+          id: 'demo-lesson-1',
+          title: 'Introduction to Data Privacy',
+          description: 'Learn the fundamentals of data privacy and why it matters',
+          type: 'video' as const,
+          contentUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+          duration: 10,
+          order: 1,
+          quiz: {
+            id: 'demo-quiz-1',
+            title: 'Privacy Basics Quiz',
+            passingScore: 70,
+            questions: [
+              {
+                id: 'dq1',
+                prompt: 'What does GDPR stand for?',
+                options: [
+                  { id: 'dq1-a', text: 'General Data Protection Regulation', correct: true },
+                  { id: 'dq1-b', text: 'Global Data Privacy Rules', correct: false },
+                  { id: 'dq1-c', text: 'Government Data Protection Registry', correct: false },
+                ]
+              }
+            ]
+          }
+        },
+        {
+          id: 'demo-lesson-2',
+          title: 'Secure Data Handling',
+          description: 'Best practices for handling sensitive information',
+          type: 'slides' as const,
+          contentUrl: '/demo-slides',
+          duration: 15,
+          order: 2,
+          quiz: {
+            id: 'demo-quiz-2',
+            title: 'Data Handling Quiz',
+            passingScore: 70,
+            questions: [
+              {
+                id: 'dq2',
+                prompt: 'What is encryption?',
+                options: [
+                  { id: 'dq2-a', text: 'Converting data into a coded format', correct: true },
+                  { id: 'dq2-b', text: 'Deleting data permanently', correct: false },
+                ]
+              }
+            ]
+          }
+        },
+        {
+          id: 'demo-lesson-3',
+          title: 'Incident Response Procedures',
+          description: 'What to do when a data breach occurs',
+          type: 'video' as const,
+          contentUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+          duration: 12,
+          order: 3,
+          quiz: {
+            id: 'demo-quiz-3',
+            title: 'Incident Response Quiz',
+            passingScore: 70,
+            questions: [
+              {
+                id: 'dq3',
+                prompt: 'First step in a data breach?',
+                options: [
+                  { id: 'dq3-a', text: 'Contain and assess the breach', correct: true },
+                  { id: 'dq3-b', text: 'Ignore and hope it resolves', correct: false },
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      createdAt: new Date().toISOString(),
+    };
+
+    // Render demo module with banner
     return (
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <Card glass className="text-center py-12">
-          <h2 className="text-2xl font-bold text-white mb-4">Module Not Found</h2>
-          <p className="text-gray-400 mb-6">The module you're looking for doesn't exist.</p>
-          <Button onClick={() => router.push('/learn/dashboard')}>
-            Back to Dashboard
-          </Button>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Demo Banner */}
+        <Card className="mb-6 bg-gradient-to-r from-purple-500/10 to-blue-500/10 border-2 border-purple-500/30">
+          <div className="flex items-start space-x-4">
+            <div className="flex-shrink-0">
+              <div className="w-12 h-12 rounded-full bg-purple-500/20 border-2 border-purple-500 flex items-center justify-center">
+                <Play size={24} className="text-purple-400" />
+              </div>
+            </div>
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold text-white mb-2">🎬 Demo Mode Active</h3>
+              <p className="text-gray-300 text-sm mb-3">
+                You're viewing a demo module to experience how GetSetAI training works. 
+                This showcases the learner experience with interactive lessons and quizzes.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <Badge variant="info">Demo Content</Badge>
+                <Badge variant="default">Interactive</Badge>
+                <Badge variant="default">Fully Functional</Badge>
+              </div>
+            </div>
+          </div>
         </Card>
+
+        {/* Back Button */}
+        <Button
+          variant="ghost"
+          leftIcon={<ArrowLeft size={16} />}
+          onClick={() => router.push('/learn/dashboard')}
+          className="mb-6"
+        >
+          Back to Dashboard
+        </Button>
+
+        {/* Render using the same component structure */}
+        <ModuleContent module={demoModule} isDemo={true} />
       </div>
     );
   }
 
-  // Mock progress (in real app, fetch from API/state)
-  const completedLessons = module.id === 'mod-1' ? ['lesson-1-1'] : [];
-  const progress = (completedLessons.length / module.lessons.length) * 100;
-
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Back Button */}
       <Button
         variant="ghost"
         leftIcon={<ArrowLeft size={16} />}
@@ -40,7 +149,19 @@ export default function ModuleViewPage({ params }: { params: { moduleId: string 
       >
         Back to Dashboard
       </Button>
+      <ModuleContent module={module} isDemo={false} />
+    </div>
+  );
+}
 
+// Separate component for module content to avoid duplication
+function ModuleContent({ module, isDemo }: { module: any; isDemo: boolean }) {
+  // Mock progress (in real app, fetch from API/state)
+  const completedLessons = module.id === 'mod-1' ? ['lesson-1-1'] : [];
+  const progress = (completedLessons.length / module.lessons.length) * 100;
+
+  return (
+    <>
       {/* Module Header */}
       <Card glass className="mb-8">
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
@@ -48,7 +169,7 @@ export default function ModuleViewPage({ params }: { params: { moduleId: string 
             <h1 className="text-3xl font-bold text-white mb-3">{module.title}</h1>
             <p className="text-gray-300 text-lg mb-4">{module.description}</p>
             <div className="flex flex-wrap gap-2">
-              {module.tags.map((tag) => (
+              {module.tags.map((tag: string) => (
                 <Badge key={tag} variant="info">{tag}</Badge>
               ))}
             </div>
@@ -74,7 +195,7 @@ export default function ModuleViewPage({ params }: { params: { moduleId: string 
           </div>
           <div className="text-center p-4 bg-gray-900 rounded-lg">
             <div className="text-2xl font-bold text-yellow-400 mb-1">
-              {module.lessons.reduce((acc, l) => acc + l.duration, 0)} min
+              {module.lessons.reduce((acc: number, l: any) => acc + l.duration, 0)} min
             </div>
             <div className="text-sm text-gray-400">Total Duration</div>
           </div>
@@ -85,7 +206,7 @@ export default function ModuleViewPage({ params }: { params: { moduleId: string 
       <div>
         <h2 className="text-2xl font-semibold text-white mb-4">Lessons</h2>
         <div className="space-y-4">
-          {module.lessons.map((lesson, index) => {
+          {module.lessons.map((lesson: any, index: number) => {
             const isCompleted = completedLessons.includes(lesson.id);
             const isLocked = index > 0 && !completedLessons.includes(module.lessons[index - 1].id);
 
@@ -167,6 +288,6 @@ export default function ModuleViewPage({ params }: { params: { moduleId: string 
           </Button>
         </Card>
       )}
-    </div>
+    </>
   );
 }
