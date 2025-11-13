@@ -1,15 +1,16 @@
 'use client';
 
-import React from 'react';
+import React, { use } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Card, CardTitle, Button, Badge, ProgressBar } from '@/components/ui';
 import { MOCK_MODULES } from '@/lib/mockData';
 import { ArrowLeft, Play, CheckCircle, Clock, Video, BookOpen } from 'lucide-react';
 
-export default function ModuleViewPage({ params }: { params: { moduleId: string } }) {
+export default function ModuleViewPage({ params }: { params: Promise<{ moduleId: string }> }) {
   const router = useRouter();
-  const module = MOCK_MODULES.find(m => m.id === params.moduleId);
+  const { moduleId } = use(params);
+  const module = MOCK_MODULES.find(m => m.id === moduleId);
 
   if (!module) {
     // Show demo module instead of error

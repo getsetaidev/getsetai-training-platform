@@ -1,13 +1,14 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, Button, Badge } from '@/components/ui';
 import { MOCK_MODULES } from '@/lib/mockData';
 import { ArrowLeft, CheckCircle2, XCircle, Play, ChevronRight, Clock, Award, AlertCircle } from 'lucide-react';
 
-export default function LessonPage({ params }: { params: { lessonId: string } }) {
+export default function LessonPage({ params }: { params: Promise<{ lessonId: string }> }) {
   const router = useRouter();
+  const { lessonId } = use(params);
   const [currentStep, setCurrentStep] = useState<'video' | 'quiz' | 'result'>('video');
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [score, setScore] = useState(0);
@@ -15,17 +16,17 @@ export default function LessonPage({ params }: { params: { lessonId: string } })
   let lesson = null;
   let moduleName = '';
   for (const mod of MOCK_MODULES) {
-    lesson = mod.lessons.find(l => l.id === params.lessonId);
+    lesson = mod.lessons.find(l => l.id === lessonId);
     if (lesson) {
       moduleName = mod.title;
       break;
     }
   }
 
-  if (!lesson && params.lessonId.startsWith('demo-lesson-')) {
+  if (!lesson && lessonId.startsWith('demo-lesson-')) {
     moduleName = 'Demo: Data Privacy & Security';
     lesson = {
-      id: params.lessonId,
+      id: lessonId,
       title: 'Introduction to Data Privacy',
       description: 'Learn the fundamentals of data privacy and why it matters in modern business.',
       type: 'video' as const,
